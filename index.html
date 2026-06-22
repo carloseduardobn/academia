@@ -1,1525 +1,1076 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LOGBOOK — Diário de Treino</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      :root {
-        --ink: #1c1b1a;
-        --paper: #f2eee4;
-        --paper2: #e8e2d2;
-        --orange: #ff5a1f;
-        --olive: #4a5d3a;
-        --line: #1c1b1a33;
-        --red: #b3261e;
-      }
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-      body {
-        background: var(--paper);
-        color: var(--ink);
-        font-family: "Archivo", sans-serif;
-        min-height: 100vh;
-        background-image: repeating-linear-gradient(
-          transparent,
-          transparent 38px,
-          var(--line) 39px
-        );
-      }
-      ::selection {
-        background: var(--orange);
-        color: var(--paper);
-      }
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LOGBOOK — Diário de Treino</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1C1B1A;
+  --paper:#F2EEE4;
+  --paper2:#E8E2D2;
+  --orange:#FF5A1F;
+  --olive:#4A5D3A;
+  --line:#1C1B1A33;
+  --red:#B3261E;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Archivo',sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+  background-image:
+    repeating-linear-gradient(transparent, transparent 38px, var(--line) 39px);
+}
+::selection{background:var(--orange);color:var(--paper);}
 
-      /* ---------- WELCOME MODAL ---------- */
-      .modal-overlay {
-        position: fixed;
-        inset: 0;
-        background: #1c1b1acc;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-        padding: 20px;
-      }
-      .modal-overlay.hidden {
-        display: none;
-      }
-      .modal-box {
-        background: var(--paper);
-        border: 3px solid var(--ink);
-        padding: 32px;
-        max-width: 380px;
-        width: 100%;
-        position: relative;
-      }
-      .modal-box::before {
-        content: "";
-        position: absolute;
-        top: -3px;
-        left: 24px;
-        width: 40px;
-        height: 7px;
-        background: var(--orange);
-      }
-      .modal-tag {
-        font-family: "JetBrains Mono", monospace;
-        font-size: 10px;
-        letter-spacing: 2px;
-        color: var(--orange);
-        margin-bottom: 10px;
-      }
-      .modal-box h2 {
-        font-family: "Archivo Black", sans-serif;
-        font-size: 22px;
-        margin-bottom: 6px;
-        line-height: 1.2;
-      }
-      .modal-sub {
-        font-family: "JetBrains Mono", monospace;
-        font-size: 12px;
-        color: var(--ink) 88;
-        margin-bottom: 18px;
-      }
-      .modal-box input {
-        width: 100%;
-        font-family: "Archivo", sans-serif;
-        font-size: 16px;
-        padding: 12px 14px;
-        border: 2px solid var(--ink);
-        background: var(--paper2);
-        color: var(--ink);
-      }
-      .modal-box input:focus {
-        outline: 3px solid var(--orange);
-        outline-offset: 0;
-      }
+/* ---------- WELCOME MODAL ---------- */
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  background:#1C1B1Acc;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:1000;
+  padding:20px;
+}
+.modal-overlay.hidden{display:none;}
+.modal-box{
+  background:var(--paper);
+  border:3px solid var(--ink);
+  padding:32px;
+  max-width:380px;
+  width:100%;
+  position:relative;
+}
+.modal-box::before{
+  content:'';
+  position:absolute;
+  top:-3px;left:24px;
+  width:40px;height:7px;
+  background:var(--orange);
+}
+.modal-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:2px;
+  color:var(--orange);
+  margin-bottom:10px;
+}
+.modal-box h2{
+  font-family:'Archivo Black',sans-serif;
+  font-size:22px;
+  margin-bottom:6px;
+  line-height:1.2;
+}
+.modal-sub{
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  color:var(--ink)88;
+  margin-bottom:18px;
+}
+.modal-box input{
+  width:100%;
+  font-family:'Archivo',sans-serif;
+  font-size:16px;
+  padding:12px 14px;
+  border:2px solid var(--ink);
+  background:var(--paper2);
+  color:var(--ink);
+}
+.modal-box input:focus{
+  outline:3px solid var(--orange);
+  outline-offset:0;
+}
 
-      /* ---------- HEADER ---------- */
-      header {
-        padding: 28px 24px 18px;
-        border-bottom: 3px solid var(--ink);
-        display: flex;
-        align-items: flex-end;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 12px;
-      }
-      .brand {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-      }
-      .brand .mark {
-        width: 46px;
-        height: 46px;
-        background: var(--ink);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transform: rotate(-3deg);
-      }
-      .brand .mark span {
-        color: var(--orange);
-        font-family: "Archivo Black", sans-serif;
-        font-size: 22px;
-      }
-      .brand h1 {
-        font-family: "Archivo Black", sans-serif;
-        font-size: 28px;
-        letter-spacing: -0.5px;
-      }
-      .brand .sub {
-        font-family: "JetBrains Mono", monospace;
-        font-size: 11px;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        color: var(--ink) 99;
-        margin-top: 2px;
-      }
-      .date-stamp {
-        font-family: "JetBrains Mono", monospace;
-        font-size: 12px;
-        border: 2px solid var(--ink);
-        padding: 6px 12px;
-        transform: rotate(2deg);
-        letter-spacing: 1px;
-      }
+/* ---------- HEADER ---------- */
+header{
+  padding:28px 24px 18px;
+  border-bottom:3px solid var(--ink);
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:12px;
+}
+.brand{display:flex;align-items:center;gap:14px;}
+.brand .mark{
+  width:46px;height:46px;
+  background:var(--ink);
+  display:flex;align-items:center;justify-content:center;
+  transform:rotate(-3deg);
+}
+.brand .mark span{
+  color:var(--orange);
+  font-family:'Archivo Black',sans-serif;
+  font-size:22px;
+}
+.brand h1{
+  font-family:'Archivo Black',sans-serif;
+  font-size:28px;
+  letter-spacing:-0.5px;
+}
+.brand .sub{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--ink)99;
+  margin-top:2px;
+}
+.date-stamp{
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  border:2px solid var(--ink);
+  padding:6px 12px;
+  transform:rotate(2deg);
+  letter-spacing:1px;
+}
 
-      /* ---------- NAV TABS ---------- */
-      nav {
-        display: flex;
-        gap: 0;
-        border-bottom: 3px solid var(--ink);
-        overflow-x: auto;
-      }
-      nav button {
-        font-family: "Archivo", sans-serif;
-        font-weight: 700;
-        font-size: 14px;
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-        background: transparent;
-        border: none;
-        border-right: 2px solid var(--ink);
-        padding: 14px 22px;
-        cursor: pointer;
-        color: var(--ink) aa;
-        white-space: nowrap;
-        position: relative;
-        transition:
-          background 0.15s ease,
-          color 0.15s ease;
-      }
-      nav button .num {
-        font-family: "JetBrains Mono", monospace;
-        font-size: 11px;
-        margin-right: 8px;
-        color: var(--orange);
-      }
-      nav button:hover {
-        background: var(--paper2);
-      }
-      nav button.active {
-        background: var(--ink);
-        color: var(--paper);
-      }
-      nav button.active .num {
-        color: var(--orange);
-      }
+/* ---------- NAV TABS ---------- */
+nav{
+  display:flex;
+  gap:0;
+  border-bottom:3px solid var(--ink);
+  overflow-x:auto;
+}
+nav button{
+  font-family:'Archivo',sans-serif;
+  font-weight:700;
+  font-size:14px;
+  letter-spacing:0.5px;
+  text-transform:uppercase;
+  background:transparent;
+  border:none;
+  border-right:2px solid var(--ink);
+  padding:14px 22px;
+  cursor:pointer;
+  color:var(--ink)aa;
+  white-space:nowrap;
+  position:relative;
+  transition:background .15s ease,color .15s ease;
+}
+nav button .num{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  margin-right:8px;
+  color:var(--orange);
+}
+nav button:hover{background:var(--paper2);}
+nav button.active{
+  background:var(--ink);
+  color:var(--paper);
+}
+nav button.active .num{color:var(--orange);}
 
-      main {
-        max-width: 980px;
-        margin: 0 auto;
-        padding: 30px 24px 80px;
-      }
-      .view {
-        display: none;
-        animation: fade 0.25s ease;
-      }
-      .view.active {
-        display: block;
-      }
-      @keyframes fade {
-        from {
-          opacity: 0;
-          transform: translateY(6px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
+main{max-width:980px;margin:0 auto;padding:30px 24px 80px;}
+.view{display:none;animation:fade .25s ease;}
+.view.active{display:block;}
+@keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
 
-      h2.section-title {
-        font-family: "Archivo Black", sans-serif;
-        font-size: 22px;
-        margin-bottom: 4px;
-      }
-      .section-sub {
-        font-family: "JetBrains Mono", monospace;
-        font-size: 12px;
-        color: var(--ink) 88;
-        margin-bottom: 22px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-      }
+h2.section-title{
+  font-family:'Archivo Black',sans-serif;
+  font-size:22px;
+  margin-bottom:4px;
+}
+.section-sub{
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  color:var(--ink)88;
+  margin-bottom:22px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+}
 
-      /* ---------- CARD ---------- */
-      .card {
-        background: var(--paper2);
-        border: 2px solid var(--ink);
-        padding: 20px;
-        margin-bottom: 18px;
-        position: relative;
-      }
-      .card::before {
-        content: "";
-        position: absolute;
-        top: -2px;
-        left: 18px;
-        width: 34px;
-        height: 6px;
-        background: var(--orange);
-      }
+/* ---------- CARD ---------- */
+.card{
+  background:var(--paper2);
+  border:2px solid var(--ink);
+  padding:20px;
+  margin-bottom:18px;
+  position:relative;
+}
+.card::before{
+  content:'';
+  position:absolute;
+  top:-2px;left:18px;
+  width:34px;height:6px;
+  background:var(--orange);
+}
 
-      /* ---------- FORM ---------- */
-      .form-row {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-        margin-bottom: 14px;
-      }
-      .field {
-        flex: 1;
-        min-width: 140px;
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-      }
-      .field label {
-        font-family: "JetBrains Mono", monospace;
-        font-size: 10px;
-        letter-spacing: 1.5px;
-        text-transform: uppercase;
-        color: var(--ink) 99;
-      }
-      .field input,
-      .field select {
-        font-family: "Archivo", sans-serif;
-        font-size: 15px;
-        padding: 10px 12px;
-        border: 2px solid var(--ink);
-        background: var(--paper);
-        color: var(--ink);
-      }
-      .field input:focus,
-      .field select:focus {
-        outline: 3px solid var(--orange);
-        outline-offset: 0;
-      }
-      .btn {
-        font-family: "Archivo", sans-serif;
-        font-weight: 700;
-        font-size: 13px;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        background: var(--ink);
-        color: var(--paper);
-        border: 2px solid var(--ink);
-        padding: 12px 22px;
-        cursor: pointer;
-        transition:
-          transform 0.12s ease,
-          background 0.12s ease;
-      }
-      .btn:hover {
-        background: var(--orange);
-        border-color: var(--orange);
-      }
-      .btn:active {
-        transform: scale(0.97);
-      }
-      .btn.secondary {
-        background: transparent;
-        color: var(--ink);
-      }
-      .btn.secondary:hover {
-        background: var(--ink);
-        color: var(--paper);
-      }
-      .btn.danger {
-        background: transparent;
-        border-color: var(--red);
-        color: var(--red);
-        padding: 6px 10px;
-        font-size: 11px;
-      }
-      .btn.danger:hover {
-        background: var(--red);
-        color: var(--paper);
-      }
+/* ---------- FORM ---------- */
+.form-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
+.field{flex:1;min-width:140px;display:flex;flex-direction:column;gap:6px;}
+.field label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  color:var(--ink)99;
+}
+.field input,.field select{
+  font-family:'Archivo',sans-serif;
+  font-size:15px;
+  padding:10px 12px;
+  border:2px solid var(--ink);
+  background:var(--paper);
+  color:var(--ink);
+}
+.field input:focus,.field select:focus{
+  outline:3px solid var(--orange);
+  outline-offset:0;
+}
+.btn{
+  font-family:'Archivo',sans-serif;
+  font-weight:700;
+  font-size:13px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  background:var(--ink);
+  color:var(--paper);
+  border:2px solid var(--ink);
+  padding:12px 22px;
+  cursor:pointer;
+  transition:transform .12s ease, background .12s ease;
+}
+.btn:hover{background:var(--orange);border-color:var(--orange);}
+.btn:active{transform:scale(.97);}
+.btn.secondary{
+  background:transparent;
+  color:var(--ink);
+}
+.btn.secondary:hover{background:var(--ink);color:var(--paper);}
+.btn.danger{
+  background:transparent;
+  border-color:var(--red);
+  color:var(--red);
+  padding:6px 10px;
+  font-size:11px;
+}
+.btn.danger:hover{background:var(--red);color:var(--paper);}
 
-      /* ---------- LISTS / TABLES ---------- */
-      .entry-list {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-      .entry {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        background: var(--paper);
-        border: 2px solid var(--ink);
-        padding: 10px 14px;
-        gap: 10px;
-        flex-wrap: wrap;
-      }
-      .entry .info {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-      }
-      .entry .name {
-        font-weight: 700;
-        font-size: 15px;
-      }
-      .entry .meta {
-        font-family: "JetBrains Mono", monospace;
-        font-size: 11px;
-        color: var(--ink) 88;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-      .entry .kcal {
-        font-family: "JetBrains Mono", monospace;
-        font-weight: 700;
-        font-size: 16px;
-        color: var(--olive);
-        min-width: 80px;
-        text-align: right;
-      }
-      .empty {
-        font-family: "JetBrains Mono", monospace;
-        font-size: 12px;
-        color: var(--ink) 77;
-        text-align: center;
-        padding: 30px 10px;
-        border: 2px dashed var(--ink) 55;
-      }
+/* ---------- LISTS / TABLES ---------- */
+.entry-list{display:flex;flex-direction:column;gap:8px;}
+.entry{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:var(--paper);
+  border:2px solid var(--ink);
+  padding:10px 14px;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.entry .info{display:flex;flex-direction:column;gap:2px;}
+.entry .name{font-weight:700;font-size:15px;}
+.entry .meta{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  color:var(--ink)88;
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+}
+.entry .kcal{
+  font-family:'JetBrains Mono',monospace;
+  font-weight:700;
+  font-size:16px;
+  color:var(--olive);
+  min-width:80px;
+  text-align:right;
+}
+.empty{
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  color:var(--ink)77;
+  text-align:center;
+  padding:30px 10px;
+  border:2px dashed var(--ink)55;
+}
 
-      /* ---------- DASHBOARD STAT GRID ---------- */
-      .stat-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 14px;
-        margin-bottom: 24px;
-      }
-      .stat {
-        border: 2px solid var(--ink);
-        background: var(--paper2);
-        padding: 16px;
-        position: relative;
-      }
-      .stat .label {
-        font-family: "JetBrains Mono", monospace;
-        font-size: 10px;
-        letter-spacing: 1.5px;
-        text-transform: uppercase;
-        color: var(--ink) 88;
-      }
-      .stat .value {
-        font-family: "Archivo Black", sans-serif;
-        font-size: 32px;
-        margin-top: 6px;
-        color: var(--ink);
-      }
-      .stat .value small {
-        font-size: 14px;
-        font-family: "JetBrains Mono", monospace;
-      }
-      .stat.accent {
-        background: var(--ink);
-        color: var(--paper);
-      }
-      .stat.accent .label {
-        color: var(--orange);
-      }
-      .stat.accent .value {
-        color: var(--paper);
-      }
+/* ---------- DASHBOARD STAT GRID ---------- */
+.stat-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:14px;
+  margin-bottom:24px;
+}
+.stat{
+  border:2px solid var(--ink);
+  background:var(--paper2);
+  padding:16px;
+  position:relative;
+}
+.stat .label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  color:var(--ink)88;
+}
+.stat .value{
+  font-family:'Archivo Black',sans-serif;
+  font-size:32px;
+  margin-top:6px;
+  color:var(--ink);
+}
+.stat .value small{font-size:14px;font-family:'JetBrains Mono',monospace;}
+.stat.accent{background:var(--ink);color:var(--paper);}
+.stat.accent .label{color:var(--orange);}
+.stat.accent .value{color:var(--paper);}
 
-      /* ---------- WORKOUT BLOCKS ---------- */
-      .workout-card {
-        border: 2px solid var(--ink);
-        background: var(--paper2);
-        margin-bottom: 14px;
-      }
-      .workout-head {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 14px 16px;
-        border-bottom: 2px solid var(--ink);
-        background: var(--ink);
-        color: var(--paper);
-      }
-      .workout-head h3 {
-        font-family: "Archivo Black", sans-serif;
-        font-size: 16px;
-        letter-spacing: 0.5px;
-      }
-      .workout-head .tag {
-        font-family: "JetBrains Mono", monospace;
-        font-size: 10px;
-        color: var(--orange);
-        text-transform: uppercase;
-        letter-spacing: 1px;
-      }
-      .exercise-row {
-        display: grid;
-        grid-template-columns: 1fr auto auto auto auto;
-        gap: 10px;
-        align-items: center;
-        padding: 10px 16px;
-        border-bottom: 1px solid var(--ink) 33;
-        font-family: "JetBrains Mono", monospace;
-        font-size: 12px;
-      }
-      .exercise-row:last-child {
-        border-bottom: none;
-      }
-      .exercise-row .ex-name {
-        font-family: "Archivo", sans-serif;
-        font-weight: 600;
-        font-size: 14px;
-      }
-      .exercise-row span.tagv {
-        color: var(--ink) 88;
-      }
-      .workout-actions {
-        padding: 10px 16px;
-        display: flex;
-        justify-content: flex-end;
-      }
+/* ---------- WORKOUT BLOCKS ---------- */
+.workout-card{
+  border:2px solid var(--ink);
+  background:var(--paper2);
+  margin-bottom:14px;
+}
+.workout-head{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 16px;
+  border-bottom:2px solid var(--ink);
+  background:var(--ink);
+  color:var(--paper);
+}
+.workout-head h3{font-family:'Archivo Black',sans-serif;font-size:16px;letter-spacing:0.5px;}
+.workout-head .tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  color:var(--orange);
+  text-transform:uppercase;
+  letter-spacing:1px;
+}
+.exercise-row{
+  display:grid;
+  grid-template-columns:1fr auto auto auto;
+  gap:10px;
+  align-items:center;
+  padding:10px 16px;
+  border-bottom:1px solid var(--ink)33;
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+}
+.exercise-row:last-child{border-bottom:none;}
+.exercise-row .ex-name{font-family:'Archivo',sans-serif;font-weight:600;font-size:14px;}
+.exercise-row span.tagv{color:var(--ink)88;}
+.workout-actions{padding:10px 16px;display:flex;justify-content:flex-end;}
 
-      .exercise-input-row {
-        display: grid;
-        grid-template-columns: 2fr 1fr 1fr 1fr auto;
-        gap: 8px;
-        margin-bottom: 10px;
-      }
-      .exercise-input-row input,
-      .exercise-input-row select {
-        font-family: "Archivo", sans-serif;
-        padding: 8px 10px;
-        border: 2px solid var(--ink);
-        background: var(--paper);
-        font-size: 13px;
-      }
-      .add-ex-btn {
-        background: var(--olive);
-        color: var(--paper);
-        border: 2px solid var(--olive);
-        font-weight: 700;
-        cursor: pointer;
-        font-size: 18px;
-        line-height: 1;
-      }
+.exercise-input-row{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr auto;
+  gap:8px;
+  margin-bottom:10px;
+}
+.exercise-input-row input,.exercise-input-row select{
+  font-family:'Archivo',sans-serif;
+  padding:8px 10px;
+  border:2px solid var(--ink);
+  background:var(--paper);
+  font-size:13px;
+  width:100%;
+  min-width:0;
+}
+.add-ex-btn{
+  background:var(--olive);
+  color:var(--paper);
+  border:2px solid var(--olive);
+  font-weight:700;
+  cursor:pointer;
+  font-size:18px;
+  line-height:1;
+  width:38px;
+  height:38px;
+  flex-shrink:0;
+  padding:0;
+}
 
-      /* ---------- IMC ---------- */
-      .imc-result {
-        margin-top: 18px;
-        padding: 24px;
-        border: 3px solid var(--ink);
-        text-align: center;
-        background: var(--paper);
-      }
-      .imc-result .big {
-        font-family: "Archivo Black", sans-serif;
-        font-size: 52px;
-        line-height: 1;
-      }
-      .imc-result .label {
-        font-family: "JetBrains Mono", monospace;
-        font-size: 13px;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        margin-top: 10px;
-        padding: 6px 14px;
-        display: inline-block;
-        border: 2px solid var(--ink);
-      }
-      .imc-scale {
-        display: flex;
-        margin-top: 18px;
-        border: 2px solid var(--ink);
-        font-family: "JetBrains Mono", monospace;
-        font-size: 10px;
-        text-align: center;
-      }
-      .imc-scale div {
-        padding: 8px 4px;
-        flex: 1;
-        border-right: 1px solid var(--ink) 44;
-      }
-      .imc-scale div:last-child {
-        border-right: none;
-      }
+/* ---------- IMC ---------- */
+.imc-result{
+  margin-top:18px;
+  padding:24px;
+  border:3px solid var(--ink);
+  text-align:center;
+  background:var(--paper);
+}
+.imc-result .big{
+  font-family:'Archivo Black',sans-serif;
+  font-size:52px;
+  line-height:1;
+}
+.imc-result .label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:2px;
+  margin-top:10px;
+  padding:6px 14px;
+  display:inline-block;
+  border:2px solid var(--ink);
+}
+.imc-scale{
+  display:flex;
+  margin-top:18px;
+  border:2px solid var(--ink);
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  text-align:center;
+}
+.imc-scale div{padding:8px 4px;flex:1;border-right:1px solid var(--ink)44;}
+.imc-scale div:last-child{border-right:none;}
 
-      footer {
-        text-align: center;
-        padding: 24px;
-        font-family: "JetBrains Mono", monospace;
-        font-size: 10px;
-        letter-spacing: 1px;
-        color: var(--ink) 66;
-        text-transform: uppercase;
-        border-top: 3px solid var(--ink);
-      }
+footer{
+  text-align:center;
+  padding:24px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:1px;
+  color:var(--ink)66;
+  text-transform:uppercase;
+  border-top:3px solid var(--ink);
+}
 
-      @media (max-width: 640px) {
-        header {
-          padding: 18px 16px 14px;
-          gap: 10px;
-        }
-        .brand h1 {
-          font-size: 20px;
-        }
-        .brand .mark {
-          width: 38px;
-          height: 38px;
-        }
-        .brand .mark span {
-          font-size: 18px;
-        }
-        .date-stamp {
-          font-size: 11px;
-          padding: 5px 10px;
-        }
-        nav button {
-          padding: 12px 14px;
-          font-size: 12px;
-        }
-        nav button .num {
-          margin-right: 5px;
-        }
-        main {
-          padding: 20px 14px 60px;
-        }
-        h2.section-title {
-          font-size: 18px;
-        }
-        .card {
-          padding: 14px;
-        }
-        .form-row {
-          gap: 10px;
-          margin-bottom: 10px;
-        }
-        .field {
-          min-width: 100%;
-        }
-        .stat-grid {
-          grid-template-columns: repeat(2, 1fr);
-          gap: 10px;
-        }
-        .stat {
-          padding: 12px;
-        }
-        .stat .value {
-          font-size: 24px;
-        }
-        .exercise-input-row {
-          grid-template-columns: 1fr 1fr;
-        }
-        .exercise-input-row .add-ex-btn {
-          grid-column: 1/-1;
-        }
-        .exercise-row {
-          grid-template-columns: 1fr;
-          gap: 4px;
-        }
-        .entry {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 8px;
-        }
-        .entry .kcal {
-          text-align: left;
-        }
-        .imc-result .big {
-          font-size: 38px;
-        }
-        .imc-scale {
-          flex-wrap: wrap;
-        }
-        .imc-scale div {
-          flex: 1 1 50%;
-          border-bottom: 1px solid var(--ink) 44;
-        }
-        .workout-head {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 4px;
-        }
-      }
+@media(max-width:640px){
+  header{padding:18px 16px 14px;gap:10px;}
+  .brand h1{font-size:20px;}
+  .brand .mark{width:38px;height:38px;}
+  .brand .mark span{font-size:18px;}
+  .date-stamp{font-size:11px;padding:5px 10px;}
+  nav button{padding:12px 14px;font-size:12px;}
+  nav button .num{margin-right:5px;}
+  main{padding:20px 14px 60px;}
+  h2.section-title{font-size:18px;}
+  .card{padding:14px;}
+  .form-row{gap:10px;margin-bottom:10px;}
+  .field{min-width:100%;}
+  .stat-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
+  .stat{padding:12px;}
+  .stat .value{font-size:24px;}
+  .exercise-input-row{grid-template-columns:1fr 1fr;gap:6px;}
+  .exercise-input-row select{grid-column:1/-1;}
+  .exercise-input-row .add-ex-btn{grid-column:1/-1;width:100%;}
+  .exercise-row{grid-template-columns:1fr;gap:4px;}
+  .entry{flex-direction:column;align-items:flex-start;gap:8px;}
+  .entry .kcal{text-align:left;}
+  .imc-result .big{font-size:38px;}
+  .imc-scale{flex-wrap:wrap;}
+  .imc-scale div{flex:1 1 50%;border-bottom:1px solid var(--ink)44;}
+  .workout-head{flex-direction:column;align-items:flex-start;gap:4px;}
+}
 
-      @media (max-width: 400px) {
-        .stat-grid {
-          grid-template-columns: 1fr 1fr;
-        }
-        nav button {
-          padding: 10px 10px;
-          font-size: 11px;
-        }
-        .imc-scale div {
-          flex: 1 1 100%;
-        }
-        .modal-box {
-          padding: 22px;
-        }
-        .modal-box h2 {
-          font-size: 18px;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="modal-overlay" id="welcomeOverlay">
-      <div class="modal-box">
-        <div class="modal-tag">PRIMEIRO ACESSO</div>
-        <h2>Como podemos te chamar?</h2>
-        <p class="modal-sub">Seu nome fica salvo neste navegador.</p>
-        <input
-          type="text"
-          id="welcomeNameInput"
-          placeholder="Digite seu nome"
-          maxlength="40"
-        />
-        <button
-          class="btn"
-          id="welcomeSaveBtn"
-          style="width: 100%; margin-top: 14px"
-        >
-          Começar
-        </button>
+@media(max-width:400px){
+  .stat-grid{grid-template-columns:1fr 1fr;}
+  nav button{padding:10px 10px;font-size:11px;}
+  .imc-scale div{flex:1 1 100%;}
+  .modal-box{padding:22px;}
+  .modal-box h2{font-size:18px;}
+}
+</style>
+</head>
+<body>
+
+<div class="modal-overlay" id="welcomeOverlay">
+  <div class="modal-box">
+    <div class="modal-tag">PRIMEIRO ACESSO</div>
+    <h2>Como podemos te chamar?</h2>
+    <p class="modal-sub">Seu nome fica salvo neste navegador.</p>
+    <input type="text" id="welcomeNameInput" placeholder="Digite seu nome" maxlength="40">
+    <button class="btn" id="welcomeSaveBtn" style="width:100%;margin-top:14px;">Começar</button>
+  </div>
+</div>
+
+<header>
+  <div class="brand">
+    <div class="mark"><span>L</span></div>
+    <div>
+      <h1 id="brandTitle">LOGBOOK</h1>
+      <div class="sub">registro diário de treino &amp; dieta</div>
+    </div>
+  </div>
+  <div class="date-stamp" id="todayStamp">--/--/----</div>
+</header>
+
+<nav id="tabs">
+  <button class="active" data-view="dashboard"><span class="num">01</span>Painel</button>
+  <button data-view="diario"><span class="num">02</span>Diário Alimentar</button>
+  <button data-view="treinos"><span class="num">03</span>Treinos</button>
+  <button data-view="imc"><span class="num">04</span>IMC</button>
+</nav>
+
+<main>
+
+  <!-- DASHBOARD -->
+  <section class="view active" id="view-dashboard">
+    <h2 class="section-title">Painel do dia</h2>
+    <div class="section-sub" id="dashDate">carregando...</div>
+
+    <div class="stat-grid">
+      <div class="stat accent">
+        <div class="label">Peso consumido hoje</div>
+        <div class="value" id="statKcal">0 <small>g</small></div>
+      </div>
+      <div class="stat">
+        <div class="label">Refeições hoje</div>
+        <div class="value" id="statMeals">0</div>
+      </div>
+      <div class="stat">
+        <div class="label">Treinos cadastrados</div>
+        <div class="value" id="statWorkouts">0</div>
+      </div>
+      <div class="stat">
+        <div class="label">Último IMC</div>
+        <div class="value" id="statImc">—</div>
       </div>
     </div>
 
-    <header>
-      <div class="brand">
-        <div class="mark"><span>L</span></div>
-        <div>
-          <h1 id="brandTitle">LOGBOOK</h1>
-          <div class="sub">registro diário de treino &amp; dieta</div>
+    <h2 class="section-title">Treinos recentes</h2>
+    <div class="section-sub">os últimos cadastrados aparecem aqui</div>
+    <div class="entry-list" id="dashWorkoutList"></div>
+  </section>
+
+  <!-- DIARIO ALIMENTAR -->
+  <section class="view" id="view-diario">
+    <h2 class="section-title">Diário alimentar</h2>
+    <div class="section-sub">registre o que você comeu hoje</div>
+
+    <div class="card">
+      <div class="form-row">
+        <div class="field" style="flex:2;">
+          <label>Alimento</label>
+          <input type="text" id="foodName" placeholder="ex: peito de frango grelhado">
+        </div>
+        <div class="field">
+          <label>Peso (g)</label>
+          <input type="number" id="foodGramas" placeholder="0" min="0">
         </div>
       </div>
-      <div class="date-stamp" id="todayStamp">--/--/----</div>
-    </header>
-
-    <nav id="tabs">
-      <button class="active" data-view="dashboard">
-        <span class="num">01</span>Painel
-      </button>
-      <button data-view="diario">
-        <span class="num">02</span>Diário Alimentar
-      </button>
-      <button data-view="treinos"><span class="num">03</span>Treinos</button>
-      <button data-view="imc"><span class="num">04</span>IMC</button>
-    </nav>
-
-    <main>
-      <!-- DASHBOARD -->
-      <section class="view active" id="view-dashboard">
-        <h2 class="section-title">Painel do dia</h2>
-        <div class="section-sub" id="dashDate">carregando...</div>
-
-        <div class="stat-grid">
-          <div class="stat accent">
-            <div class="label">Peso consumido hoje</div>
-            <div class="value" id="statKcal">0 <small>g</small></div>
-          </div>
-          <div class="stat">
-            <div class="label">Refeições hoje</div>
-            <div class="value" id="statMeals">0</div>
-          </div>
-          <div class="stat">
-            <div class="label">Treinos cadastrados</div>
-            <div class="value" id="statWorkouts">0</div>
-          </div>
-          <div class="stat">
-            <div class="label">Último IMC</div>
-            <div class="value" id="statImc">—</div>
-          </div>
+      <div class="form-row">
+        <div class="field">
+          <label>Refeição</label>
+          <select id="foodMeal">
+            <option>Café da manhã</option>
+            <option>Almoço</option>
+            <option>Lanche</option>
+            <option>Jantar</option>
+            <option>Ceia</option>
+            <option>Outro</option>
+          </select>
         </div>
-
-        <h2 class="section-title">Treinos recentes</h2>
-        <div class="section-sub">os últimos cadastrados aparecem aqui</div>
-        <div class="entry-list" id="dashWorkoutList"></div>
-      </section>
-
-      <!-- DIARIO ALIMENTAR -->
-      <section class="view" id="view-diario">
-        <h2 class="section-title">Diário alimentar</h2>
-        <div class="section-sub">registre o que você comeu hoje</div>
-
-        <div class="card">
-          <div class="form-row">
-            <div class="field" style="flex: 2">
-              <label>Alimento</label>
-              <input
-                type="text"
-                id="foodName"
-                placeholder="ex: peito de frango grelhado"
-              />
-            </div>
-            <div class="field">
-              <label>Peso (g)</label>
-              <input type="number" id="foodGramas" placeholder="0" min="0" />
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="field">
-              <label>Refeição</label>
-              <select id="foodMeal">
-                <option>Café da manhã</option>
-                <option>Almoço</option>
-                <option>Lanche</option>
-                <option>Jantar</option>
-                <option>Ceia</option>
-                <option>Outro</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Data</label>
-              <input type="date" id="foodDate" />
-            </div>
-            <div class="field">
-              <label>Horário</label>
-              <input type="time" id="foodTime" />
-            </div>
-          </div>
-          <button class="btn" id="addFoodBtn">+ Adicionar alimento</button>
+        <div class="field">
+          <label>Data</label>
+          <input type="date" id="foodDate">
         </div>
-
-        <div
-          class="form-row"
-          style="align-items: center; justify-content: space-between"
-        >
-          <button
-            class="btn secondary"
-            id="prevDayBtn"
-            style="padding: 10px 16px"
-          >
-            ‹
-          </button>
-          <div style="text-align: center">
-            <h2 class="section-title" style="margin: 0" id="diaryWeekday">—</h2>
-            <div
-              class="section-sub"
-              style="margin: 2px 0 0"
-              id="diaryDateLabel"
-            >
-              —
-            </div>
-          </div>
-          <button
-            class="btn secondary"
-            id="nextDayBtn"
-            style="padding: 10px 16px"
-          >
-            ›
-          </button>
+        <div class="field">
+          <label>Horário</label>
+          <input type="time" id="foodTime">
         </div>
-        <div
-          class="form-row"
-          style="align-items: center; justify-content: space-between"
-        >
-          <input
-            type="date"
-            id="diaryDateFilter"
-            class="field"
-            style="max-width: 170px"
-          />
-          <div
-            style="
-              font-family: &quot;JetBrains Mono&quot;, monospace;
-              font-size: 13px;
-              font-weight: 700;
-            "
-          >
-            Total: <span id="diaryTotal">0</span> g
-          </div>
+      </div>
+      <button class="btn" id="addFoodBtn">+ Adicionar alimento</button>
+    </div>
+
+    <div class="form-row" style="align-items:center;justify-content:space-between;">
+      <button class="btn secondary" id="prevDayBtn" style="padding:10px 16px;">‹</button>
+      <div style="text-align:center;">
+        <h2 class="section-title" style="margin:0;" id="diaryWeekday">—</h2>
+        <div class="section-sub" style="margin:2px 0 0;" id="diaryDateLabel">—</div>
+      </div>
+      <button class="btn secondary" id="nextDayBtn" style="padding:10px 16px;">›</button>
+    </div>
+    <div class="form-row" style="align-items:center;justify-content:space-between;">
+      <input type="date" id="diaryDateFilter" class="field" style="max-width:170px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;">
+        Total: <span id="diaryTotal">0</span> g
+      </div>
+    </div>
+    <div id="foodByMeal"></div>
+  </section>
+
+  <!-- TREINOS -->
+  <section class="view" id="view-treinos">
+    <h2 class="section-title">Criar treino</h2>
+    <div class="section-sub">monte sua ficha de exercícios</div>
+
+    <div class="card">
+      <div class="form-row">
+        <div class="field" style="flex:2;">
+          <label>Nome do treino</label>
+          <input type="text" id="workoutName" placeholder="ex: Treino A — Peito e Tríceps">
         </div>
-        <div id="foodByMeal"></div>
-      </section>
+      </div>
 
-      <!-- TREINOS -->
-      <section class="view" id="view-treinos">
-        <h2 class="section-title">Criar treino</h2>
-        <div class="section-sub">monte sua ficha de exercícios</div>
+      <label style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink)99;display:block;margin-bottom:8px;">Exercícios</label>
+      <div id="exerciseInputs"></div>
+      <datalist id="exerciseDatalist"></datalist>
+      <button class="btn secondary" id="addExerciseRow" style="margin-bottom:14px;">+ Linha de exercício</button>
+      <br>
+      <button class="btn" id="saveWorkoutBtn">Salvar treino</button>
+    </div>
 
-        <div class="card">
-          <div class="form-row">
-            <div class="field" style="flex: 2">
-              <label>Nome do treino</label>
-              <input
-                type="text"
-                id="workoutName"
-                placeholder="ex: Treino A — Peito e Tríceps"
-              />
-            </div>
-          </div>
+    <h2 class="section-title">Meus treinos</h2>
+    <div class="section-sub">tudo que você já cadastrou</div>
+    <div id="workoutList"></div>
+  </section>
 
-          <label
-            style="
-              font-family: &quot;JetBrains Mono&quot;, monospace;
-              font-size: 10px;
-              letter-spacing: 1.5px;
-              text-transform: uppercase;
-              color: var(--ink) 99;
-              display: block;
-              margin-bottom: 8px;
-            "
-            >Exercícios</label
-          >
-          <div id="exerciseInputs"></div>
-          <datalist id="exerciseDatalist"></datalist>
-          <button
-            class="btn secondary"
-            id="addExerciseRow"
-            style="margin-bottom: 14px"
-          >
-            + Linha de exercício
-          </button>
-          <br />
-          <button class="btn" id="saveWorkoutBtn">Salvar treino</button>
+  <!-- IMC -->
+  <section class="view" id="view-imc">
+    <h2 class="section-title">Calculadora de IMC</h2>
+    <div class="section-sub">índice de massa corporal</div>
+
+    <div class="card">
+      <div class="form-row">
+        <div class="field">
+          <label>Peso (kg)</label>
+          <input type="number" id="imcPeso" placeholder="ex: 70" step="0.1" min="0">
         </div>
-
-        <h2 class="section-title">Meus treinos</h2>
-        <div class="section-sub">tudo que você já cadastrou</div>
-        <div id="workoutList"></div>
-      </section>
-
-      <!-- IMC -->
-      <section class="view" id="view-imc">
-        <h2 class="section-title">Calculadora de IMC</h2>
-        <div class="section-sub">índice de massa corporal</div>
-
-        <div class="card">
-          <div class="form-row">
-            <div class="field">
-              <label>Peso (kg)</label>
-              <input
-                type="number"
-                id="imcPeso"
-                placeholder="ex: 70"
-                step="0.1"
-                min="0"
-              />
-            </div>
-            <div class="field">
-              <label>Altura (m)</label>
-              <input
-                type="number"
-                id="imcAltura"
-                placeholder="ex: 1.75"
-                step="0.01"
-                min="0"
-              />
-            </div>
-          </div>
-          <button class="btn" id="calcImcBtn">Calcular IMC</button>
-
-          <div class="imc-result" id="imcResultBox" style="display: none">
-            <div class="big" id="imcValue">--</div>
-            <div class="label" id="imcLabel">—</div>
-            <div class="imc-scale">
-              <div>Abaixo<br />&lt;18.5</div>
-              <div>Normal<br />18.5–24.9</div>
-              <div>Sobrepeso<br />25–29.9</div>
-              <div>Obesidade<br />≥30</div>
-            </div>
-          </div>
+        <div class="field">
+          <label>Altura (m)</label>
+          <input type="number" id="imcAltura" placeholder="ex: 1.75" step="0.01" min="0">
         </div>
+      </div>
+      <button class="btn" id="calcImcBtn">Calcular IMC</button>
 
-        <h2 class="section-title">Histórico</h2>
-        <div class="entry-list" id="imcHistory"></div>
-      </section>
-    </main>
+      <div class="imc-result" id="imcResultBox" style="display:none;">
+        <div class="big" id="imcValue">--</div>
+        <div class="label" id="imcLabel">—</div>
+        <div class="imc-scale">
+          <div>Abaixo<br>&lt;18.5</div>
+          <div>Normal<br>18.5–24.9</div>
+          <div>Sobrepeso<br>25–29.9</div>
+          <div>Obesidade<br>≥30</div>
+        </div>
+      </div>
+    </div>
 
-    <footer>
-      Logbook · dados salvos apenas neste navegador via localStorage
-    </footer>
+    <h2 class="section-title">Histórico</h2>
+    <div class="entry-list" id="imcHistory"></div>
+  </section>
 
-    <script>
-      /* ===================== STORAGE HELPERS ===================== */
-      const DB = {
-        get(key, fallback) {
-          try {
-            return JSON.parse(localStorage.getItem(key)) ?? fallback
-          } catch (e) {
-            return fallback
-          }
-        },
-        set(key, val) {
-          localStorage.setItem(key, JSON.stringify(val))
-        },
-      }
-      const KEYS = {
-        FOODS: "logbook_foods",
-        WORKOUTS: "logbook_workouts",
-        IMC: "logbook_imc",
-      }
+</main>
 
-      function todayISO() {
-        const d = new Date()
-        return d.toISOString().slice(0, 10)
-      }
-      function fmtDateBR(iso) {
-        const [y, m, d] = iso.split("-")
-        return `${d}/${m}/${y}`
-      }
-      function uid() {
-        return Date.now().toString(36) + Math.random().toString(36).slice(2, 7)
-      }
+<footer>Logbook · dados salvos apenas neste navegador via localStorage</footer>
 
-      /* ===================== WELCOME / NOME DO USUÁRIO ===================== */
-      const KEY_USERNAME = "logbook_username"
-      const welcomeOverlay = document.getElementById("welcomeOverlay")
-      const welcomeNameInput = document.getElementById("welcomeNameInput")
-      const brandTitle = document.getElementById("brandTitle")
+<script>
+/* ===================== STORAGE HELPERS ===================== */
+const DB = {
+  get(key, fallback){ try{ return JSON.parse(localStorage.getItem(key)) ?? fallback; }catch(e){ return fallback; } },
+  set(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
+};
+const KEYS = { FOODS:'logbook_foods', WORKOUTS:'logbook_workouts', IMC:'logbook_imc' };
 
-      function applyUsername(name) {
-        brandTitle.textContent = `Olá, ${name}`
-      }
+function todayISO(){
+  const d = new Date();
+  return d.toISOString().slice(0,10);
+}
+function fmtDateBR(iso){
+  const [y,m,d] = iso.split('-');
+  return `${d}/${m}/${y}`;
+}
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
 
-      function initWelcome() {
-        const saved = localStorage.getItem(KEY_USERNAME)
-        if (saved) {
-          applyUsername(saved)
-          welcomeOverlay.classList.add("hidden")
-        } else {
-          welcomeOverlay.classList.remove("hidden")
-          welcomeNameInput.focus()
-        }
-      }
+/* ===================== WELCOME / NOME DO USUÁRIO ===================== */
+const KEY_USERNAME = 'logbook_username';
+const welcomeOverlay = document.getElementById('welcomeOverlay');
+const welcomeNameInput = document.getElementById('welcomeNameInput');
+const brandTitle = document.getElementById('brandTitle');
 
-      function saveUsername() {
-        const name = welcomeNameInput.value.trim()
-        if (!name) {
-          welcomeNameInput.focus()
-          return
-        }
-        localStorage.setItem(KEY_USERNAME, name)
-        applyUsername(name)
-        welcomeOverlay.classList.add("hidden")
-      }
+function applyUsername(name){
+  brandTitle.textContent = `Olá, ${name}`;
+}
 
-      document
-        .getElementById("welcomeSaveBtn")
-        .addEventListener("click", saveUsername)
-      welcomeNameInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") saveUsername()
-      })
-      brandTitle.style.cursor = "pointer"
-      brandTitle.title = "Clique para alterar seu nome"
-      brandTitle.addEventListener("click", () => {
-        welcomeNameInput.value = localStorage.getItem(KEY_USERNAME) || ""
-        welcomeOverlay.classList.remove("hidden")
-        welcomeNameInput.focus()
-      })
+function initWelcome(){
+  const saved = localStorage.getItem(KEY_USERNAME);
+  if(saved){
+    applyUsername(saved);
+    welcomeOverlay.classList.add('hidden');
+  } else {
+    welcomeOverlay.classList.remove('hidden');
+    welcomeNameInput.focus();
+  }
+}
 
-      initWelcome()
+function saveUsername(){
+  const name = welcomeNameInput.value.trim();
+  if(!name){ welcomeNameInput.focus(); return; }
+  localStorage.setItem(KEY_USERNAME, name);
+  applyUsername(name);
+  welcomeOverlay.classList.add('hidden');
+}
 
-      /* ===================== TAB NAVIGATION ===================== */
-      const tabs = document.querySelectorAll("#tabs button")
-      const views = document.querySelectorAll(".view")
-      tabs.forEach((btn) => {
-        btn.addEventListener("click", () => {
-          tabs.forEach((b) => b.classList.remove("active"))
-          views.forEach((v) => v.classList.remove("active"))
-          btn.classList.add("active")
-          document
-            .getElementById("view-" + btn.dataset.view)
-            .classList.add("active")
-          if (btn.dataset.view === "dashboard") renderDashboard()
-        })
-      })
+document.getElementById('welcomeSaveBtn').addEventListener('click', saveUsername);
+welcomeNameInput.addEventListener('keydown', (e)=>{
+  if(e.key==='Enter') saveUsername();
+});
+brandTitle.style.cursor='pointer';
+brandTitle.title='Clique para alterar seu nome';
+brandTitle.addEventListener('click', ()=>{
+  welcomeNameInput.value = localStorage.getItem(KEY_USERNAME) || '';
+  welcomeOverlay.classList.remove('hidden');
+  welcomeNameInput.focus();
+});
 
-      /* ===================== HEADER DATE ===================== */
-      document.getElementById("todayStamp").textContent = fmtDateBR(todayISO())
+initWelcome();
 
-      /* ===================== DIÁRIO ALIMENTAR ===================== */
-      const WEEKDAYS = [
-        "Domingo",
-        "Segunda-feira",
-        "Terça-feira",
-        "Quarta-feira",
-        "Quinta-feira",
-        "Sexta-feira",
-        "Sábado",
-      ]
+/* ===================== TAB NAVIGATION ===================== */
+const tabs = document.querySelectorAll('#tabs button');
+const views = document.querySelectorAll('.view');
+tabs.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    tabs.forEach(b=>b.classList.remove('active'));
+    views.forEach(v=>v.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('view-'+btn.dataset.view).classList.add('active');
+    if(btn.dataset.view==='dashboard') renderDashboard();
+  });
+});
 
-      function weekdayFromISO(iso) {
-        const [y, m, d] = iso.split("-").map(Number)
-        const dt = new Date(y, m - 1, d)
-        return WEEKDAYS[dt.getDay()]
-      }
-      function shiftDateISO(iso, days) {
-        const [y, m, d] = iso.split("-").map(Number)
-        const dt = new Date(y, m - 1, d)
-        dt.setDate(dt.getDate() + days)
-        return dt.toISOString().slice(0, 10)
-      }
-      function nowTimeHHMM() {
-        const d = new Date()
-        return d.toTimeString().slice(0, 5)
-      }
+/* ===================== HEADER DATE ===================== */
+document.getElementById('todayStamp').textContent = fmtDateBR(todayISO());
 
-      const foodNameEl = document.getElementById("foodName")
-      const foodGramasEl = document.getElementById("foodGramas")
-      const foodMealEl = document.getElementById("foodMeal")
-      const foodDateEl = document.getElementById("foodDate")
-      const foodTimeEl = document.getElementById("foodTime")
-      const foodByMealEl = document.getElementById("foodByMeal")
-      const diaryTotalEl = document.getElementById("diaryTotal")
-      const diaryDateFilter = document.getElementById("diaryDateFilter")
-      const diaryWeekdayEl = document.getElementById("diaryWeekday")
-      const diaryDateLabelEl = document.getElementById("diaryDateLabel")
+/* ===================== DIÁRIO ALIMENTAR ===================== */
+const WEEKDAYS = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
 
-      foodDateEl.value = todayISO()
-      foodTimeEl.value = nowTimeHHMM()
-      diaryDateFilter.value = todayISO()
+function weekdayFromISO(iso){
+  const [y,m,d] = iso.split('-').map(Number);
+  const dt = new Date(y, m-1, d);
+  return WEEKDAYS[dt.getDay()];
+}
+function shiftDateISO(iso, days){
+  const [y,m,d] = iso.split('-').map(Number);
+  const dt = new Date(y, m-1, d);
+  dt.setDate(dt.getDate()+days);
+  return dt.toISOString().slice(0,10);
+}
+function nowTimeHHMM(){
+  const d = new Date();
+  return d.toTimeString().slice(0,5);
+}
 
-      document.getElementById("addFoodBtn").addEventListener("click", () => {
-        const name = foodNameEl.value.trim()
-        const gramas = parseFloat(foodGramasEl.value)
-        if (!name) {
-          foodNameEl.focus()
-          return
-        }
-        if (isNaN(gramas) || gramas < 0) {
-          foodGramasEl.focus()
-          return
-        }
-        const date = foodDateEl.value || todayISO()
-        const time = foodTimeEl.value || nowTimeHHMM()
-        const foods = DB.get(KEYS.FOODS, [])
-        foods.push({
-          id: uid(),
-          name,
-          gramas,
-          meal: foodMealEl.value,
-          date,
-          time,
-        })
-        DB.set(KEYS.FOODS, foods)
-        foodNameEl.value = ""
-        foodGramasEl.value = ""
-        foodTimeEl.value = nowTimeHHMM()
-        diaryDateFilter.value = date
-        foodNameEl.focus()
-        renderFoodList()
-      })
+const foodNameEl = document.getElementById('foodName');
+const foodGramasEl = document.getElementById('foodGramas');
+const foodMealEl = document.getElementById('foodMeal');
+const foodDateEl = document.getElementById('foodDate');
+const foodTimeEl = document.getElementById('foodTime');
+const foodByMealEl = document.getElementById('foodByMeal');
+const diaryTotalEl = document.getElementById('diaryTotal');
+const diaryDateFilter = document.getElementById('diaryDateFilter');
+const diaryWeekdayEl = document.getElementById('diaryWeekday');
+const diaryDateLabelEl = document.getElementById('diaryDateLabel');
 
-      document.getElementById("prevDayBtn").addEventListener("click", () => {
-        diaryDateFilter.value = shiftDateISO(
-          diaryDateFilter.value || todayISO(),
-          -1,
-        )
-        renderFoodList()
-      })
-      document.getElementById("nextDayBtn").addEventListener("click", () => {
-        diaryDateFilter.value = shiftDateISO(
-          diaryDateFilter.value || todayISO(),
-          1,
-        )
-        renderFoodList()
-      })
-      diaryDateFilter.addEventListener("change", renderFoodList)
+foodDateEl.value = todayISO();
+foodTimeEl.value = nowTimeHHMM();
+diaryDateFilter.value = todayISO();
 
-      const MEAL_ORDER = [
-        "Café da manhã",
-        "Almoço",
-        "Lanche",
-        "Jantar",
-        "Ceia",
-        "Outro",
-      ]
+document.getElementById('addFoodBtn').addEventListener('click', ()=>{
+  const name = foodNameEl.value.trim();
+  const gramas = parseFloat(foodGramasEl.value);
+  if(!name){ foodNameEl.focus(); return; }
+  if(isNaN(gramas) || gramas<0){ foodGramasEl.focus(); return; }
+  const date = foodDateEl.value || todayISO();
+  const time = foodTimeEl.value || nowTimeHHMM();
+  const foods = DB.get(KEYS.FOODS, []);
+  foods.push({ id:uid(), name, gramas, meal:foodMealEl.value, date, time });
+  DB.set(KEYS.FOODS, foods);
+  foodNameEl.value=''; foodGramasEl.value='';
+  foodTimeEl.value = nowTimeHHMM();
+  diaryDateFilter.value = date;
+  foodNameEl.focus();
+  renderFoodList();
+});
 
-      function renderFoodList() {
-        const date = diaryDateFilter.value || todayISO()
-        diaryWeekdayEl.textContent = weekdayFromISO(date)
-        diaryDateLabelEl.textContent = fmtDateBR(date)
+document.getElementById('prevDayBtn').addEventListener('click', ()=>{
+  diaryDateFilter.value = shiftDateISO(diaryDateFilter.value || todayISO(), -1);
+  renderFoodList();
+});
+document.getElementById('nextDayBtn').addEventListener('click', ()=>{
+  diaryDateFilter.value = shiftDateISO(diaryDateFilter.value || todayISO(), 1);
+  renderFoodList();
+});
+diaryDateFilter.addEventListener('change', renderFoodList);
 
-        const foods = DB.get(KEYS.FOODS, []).filter((f) => f.date === date)
-        foodByMealEl.innerHTML = ""
-        let total = 0
+const MEAL_ORDER = ['Café da manhã','Almoço','Lanche','Jantar','Ceia','Outro'];
 
-        if (foods.length === 0) {
-          foodByMealEl.innerHTML =
-            '<div class="empty">Nenhum alimento registrado neste dia.</div>'
-          diaryTotalEl.textContent = 0
-          return
-        }
+function renderFoodList(){
+  const date = diaryDateFilter.value || todayISO();
+  diaryWeekdayEl.textContent = weekdayFromISO(date);
+  diaryDateLabelEl.textContent = fmtDateBR(date);
 
-        const groups = {}
-        foods.forEach((f) => {
-          total += f.gramas
-          if (!groups[f.meal]) groups[f.meal] = []
-          groups[f.meal].push(f)
-        })
+  const foods = DB.get(KEYS.FOODS, []).filter(f=>f.date===date);
+  foodByMealEl.innerHTML = '';
+  let total = 0;
 
-        const mealNames = Object.keys(groups).sort((a, b) => {
-          const ia = MEAL_ORDER.indexOf(a),
-            ib = MEAL_ORDER.indexOf(b)
-          return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib)
-        })
+  if(foods.length===0){
+    foodByMealEl.innerHTML = '<div class="empty">Nenhum alimento registrado neste dia.</div>';
+    diaryTotalEl.textContent = 0;
+    return;
+  }
 
-        mealNames.forEach((meal) => {
-          const items = groups[meal].sort((a, b) =>
-            (a.time || "").localeCompare(b.time || ""),
-          )
-          const mealTotal = items.reduce((s, f) => s + f.gramas, 0)
+  const groups = {};
+  foods.forEach(f=>{
+    total += f.gramas;
+    if(!groups[f.meal]) groups[f.meal] = [];
+    groups[f.meal].push(f);
+  });
 
-          const block = document.createElement("div")
-          block.className = "workout-card"
-          block.innerHTML = `
+  const mealNames = Object.keys(groups).sort((a,b)=>{
+    const ia = MEAL_ORDER.indexOf(a), ib = MEAL_ORDER.indexOf(b);
+    return (ia<0?99:ia) - (ib<0?99:ib);
+  });
+
+  mealNames.forEach(meal=>{
+    const items = groups[meal].sort((a,b)=> (a.time||'').localeCompare(b.time||''));
+    const mealTotal = items.reduce((s,f)=>s+f.gramas,0);
+
+    const block = document.createElement('div');
+    block.className='workout-card';
+    block.innerHTML = `
       <div class="workout-head">
         <h3>${escapeHTML(meal)}</h3>
         <div class="tag">${mealTotal} g</div>
       </div>
-    `
-          const list = document.createElement("div")
-          list.className = "entry-list"
-          list.style.padding = "12px 16px"
-          items.forEach((f) => {
-            const row = document.createElement("div")
-            row.className = "entry"
-            row.innerHTML = `
+    `;
+    const list = document.createElement('div');
+    list.className='entry-list';
+    list.style.padding = '12px 16px';
+    items.forEach(f=>{
+      const row = document.createElement('div');
+      row.className='entry';
+      row.innerHTML = `
         <div class="info">
           <div class="name">${escapeHTML(f.name)}</div>
-          <div class="meta">${f.time || "--:--"}</div>
+          <div class="meta">${f.time || '--:--'}</div>
         </div>
         <div class="kcal">${f.gramas} g</div>
         <button class="btn danger" data-id="${f.id}">remover</button>
-      `
-            row.querySelector("button").addEventListener("click", () => {
-              const all = DB.get(KEYS.FOODS, []).filter((x) => x.id !== f.id)
-              DB.set(KEYS.FOODS, all)
-              renderFoodList()
-            })
-            list.appendChild(row)
-          })
-          block.appendChild(list)
-          foodByMealEl.appendChild(block)
-        })
+      `;
+      row.querySelector('button').addEventListener('click', ()=>{
+        const all = DB.get(KEYS.FOODS, []).filter(x=>x.id!==f.id);
+        DB.set(KEYS.FOODS, all);
+        renderFoodList();
+      });
+      list.appendChild(row);
+    });
+    block.appendChild(list);
+    foodByMealEl.appendChild(block);
+  });
 
-        diaryTotalEl.textContent = total
-      }
+  diaryTotalEl.textContent = total;
+}
 
-      function escapeHTML(str) {
-        const div = document.createElement("div")
-        div.textContent = str
-        return div.innerHTML
-      }
+function escapeHTML(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
 
-      /* ===================== TREINOS ===================== */
-      const EXERCISES_BY_GROUP = {
-        Peito: [
-          "Supino reto",
-          "Supino inclinado",
-          "Supino declinado",
-          "Crucifixo",
-          "Crossover",
-          "Flexão de braço",
-          "Peck deck",
-        ],
-        Costas: [
-          "Puxada frente",
-          "Remada baixa",
-          "Remada curvada",
-          "Remada unilateral",
-          "Barra fixa",
-          "Levantamento terra",
-          "Pulldown",
-        ],
-        Pernas: [
-          "Agachamento livre",
-          "Leg press",
-          "Cadeira extensora",
-          "Cadeira flexora",
-          "Stiff",
-          "Afundo",
-          "Cadeira adutora",
-          "Cadeira abdutora",
-          "Panturrilha em pé",
-        ],
-        Ombros: [
-          "Desenvolvimento militar",
-          "Elevação lateral",
-          "Elevação frontal",
-          "Remada alta",
-          "Crucifixo invertido",
-        ],
-        Bíceps: [
-          "Rosca direta",
-          "Rosca alternada",
-          "Rosca martelo",
-          "Rosca scott",
-          "Rosca concentrada",
-        ],
-        Tríceps: [
-          "Tríceps testa",
-          "Tríceps corda",
-          "Tríceps francês",
-          "Mergulho no banco",
-          "Tríceps coice",
-        ],
-        Abdômen: [
-          "Abdominal supra",
-          "Abdominal infra",
-          "Prancha",
-          "Elevação de pernas",
-          "Abdominal oblíquo",
-        ],
-        Cardio: [
-          "Esteira",
-          "Bicicleta ergométrica",
-          "Corrida",
-          "Pular corda",
-          "Elíptico",
-          "HIIT",
-        ],
-      }
+/* ===================== TREINOS ===================== */
+const EXERCISES_BY_GROUP = {
+  'Peito': ['Supino reto','Supino inclinado','Supino declinado','Crucifixo','Crossover','Flexão de braço','Peck deck'],
+  'Costas': ['Puxada frente','Remada baixa','Remada curvada','Remada unilateral','Barra fixa','Levantamento terra','Pulldown'],
+  'Pernas': ['Agachamento livre','Leg press','Cadeira extensora','Cadeira flexora','Stiff','Afundo','Cadeira adutora','Cadeira abdutora','Panturrilha em pé'],
+  'Ombros': ['Desenvolvimento militar','Elevação lateral','Elevação frontal','Remada alta','Crucifixo invertido'],
+  'Bíceps': ['Rosca direta','Rosca alternada','Rosca martelo','Rosca scott','Rosca concentrada'],
+  'Tríceps': ['Tríceps testa','Tríceps corda','Tríceps francês','Mergulho no banco','Tríceps coice'],
+  'Abdômen': ['Abdominal supra','Abdominal infra','Prancha','Elevação de pernas','Abdominal oblíquo'],
+  'Cardio': ['Esteira','Bicicleta ergométrica','Corrida','Pular corda','Elíptico','HIIT']
+};
 
-      function exerciseDatalistHTML() {
-        return Object.entries(EXERCISES_BY_GROUP)
-          .map(([group, list]) =>
-            list.map((name) => `<option value="${name}">`).join(""),
-          )
-          .join("")
-      }
-      document.getElementById("exerciseDatalist").innerHTML =
-        exerciseDatalistHTML()
+function exerciseDatalistHTML(){
+  return Object.entries(EXERCISES_BY_GROUP).map(([group, list])=>
+    list.map(name=>`<option value="${name}">`).join('')
+  ).join('');
+}
+document.getElementById('exerciseDatalist').innerHTML = exerciseDatalistHTML();
 
-      function exerciseSelectOptionsHTML() {
-        return (
-          '<option value="">Selecione um exercício…</option>' +
-          Object.entries(EXERCISES_BY_GROUP)
-            .map(
-              ([group, list]) =>
-                `<optgroup label="${group}">${list.map((name) => `<option value="${name}">${name}</option>`).join("")}</optgroup>`,
-            )
-            .join("")
-        )
-      }
+function exerciseSelectOptionsHTML(){
+  return '<option value="">Selecione um exercício…</option>' +
+    Object.entries(EXERCISES_BY_GROUP).map(([group, list])=>
+      `<optgroup label="${group}">${list.map(name=>`<option value="${name}">${name}</option>`).join('')}</optgroup>`
+    ).join('');
+}
 
-      const exerciseInputsWrap = document.getElementById("exerciseInputs")
+const exerciseInputsWrap = document.getElementById('exerciseInputs');
 
-      function newExerciseRow() {
-        const row = document.createElement("div")
-        row.className = "exercise-input-row"
-        row.innerHTML = `
+function newExerciseRow(){
+  const row = document.createElement('div');
+  row.className='exercise-input-row';
+  row.innerHTML = `
     <select class="ex-name-input">${exerciseSelectOptionsHTML()}</select>
     <input type="number" placeholder="Séries" min="0" class="ex-sets-input">
     <input type="number" placeholder="Reps" min="0" class="ex-reps-input">
-    <input type="text" placeholder="Carga (kg)" class="ex-load-input">
     <button type="button" class="add-ex-btn" title="remover">×</button>
-  `
-        row
-          .querySelector(".add-ex-btn")
-          .addEventListener("click", () => row.remove())
-        exerciseInputsWrap.appendChild(row)
-      }
-      document
-        .getElementById("addExerciseRow")
-        .addEventListener("click", newExerciseRow)
-      newExerciseRow() // start with one row
+  `;
+  row.querySelector('.add-ex-btn').addEventListener('click', ()=> row.remove());
+  exerciseInputsWrap.appendChild(row);
+}
+document.getElementById('addExerciseRow').addEventListener('click', newExerciseRow);
+newExerciseRow(); // start with one row
 
-      document
-        .getElementById("saveWorkoutBtn")
-        .addEventListener("click", () => {
-          const name = document.getElementById("workoutName").value.trim()
-          if (!name) {
-            document.getElementById("workoutName").focus()
-            return
-          }
+document.getElementById('saveWorkoutBtn').addEventListener('click', ()=>{
+  const name = document.getElementById('workoutName').value.trim();
+  if(!name){ document.getElementById('workoutName').focus(); return; }
 
-          const rows = exerciseInputsWrap.querySelectorAll(
-            ".exercise-input-row",
-          )
-          const exercises = []
-          rows.forEach((r) => {
-            const exName = r.querySelector(".ex-name-input").value.trim()
-            if (!exName) return
-            exercises.push({
-              name: exName,
-              sets: r.querySelector(".ex-sets-input").value || "-",
-              reps: r.querySelector(".ex-reps-input").value || "-",
-              load: r.querySelector(".ex-load-input").value || "-",
-            })
-          })
-          if (exercises.length === 0) {
-            alert("Selecione ao menos um exercício.")
-            return
-          }
+  const rows = exerciseInputsWrap.querySelectorAll('.exercise-input-row');
+  const exercises = [];
+  rows.forEach(r=>{
+    const exName = r.querySelector('.ex-name-input').value.trim();
+    if(!exName) return;
+    exercises.push({
+      name: exName,
+      sets: r.querySelector('.ex-sets-input').value || '-',
+      reps: r.querySelector('.ex-reps-input').value || '-'
+    });
+  });
+  if(exercises.length===0){ alert('Selecione ao menos um exercício.'); return; }
 
-          const workouts = DB.get(KEYS.WORKOUTS, [])
-          workouts.unshift({
-            id: uid(),
-            name,
-            exercises,
-            createdAt: todayISO(),
-          })
-          DB.set(KEYS.WORKOUTS, workouts)
+  const workouts = DB.get(KEYS.WORKOUTS, []);
+  workouts.unshift({ id:uid(), name, exercises, createdAt: todayISO() });
+  DB.set(KEYS.WORKOUTS, workouts);
 
-          document.getElementById("workoutName").value = ""
-          exerciseInputsWrap.innerHTML = ""
-          newExerciseRow()
+  document.getElementById('workoutName').value='';
+  exerciseInputsWrap.innerHTML='';
+  newExerciseRow();
 
-          renderWorkouts()
-        })
+  renderWorkouts();
+});
 
-      function renderWorkouts() {
-        const workouts = DB.get(KEYS.WORKOUTS, [])
-        const wrap = document.getElementById("workoutList")
-        wrap.innerHTML = ""
-        if (workouts.length === 0) {
-          wrap.innerHTML =
-            '<div class="empty">Nenhum treino cadastrado ainda.</div>'
-          return
-        }
-        workouts.forEach((w) => {
-          const card = document.createElement("div")
-          card.className = "workout-card"
-          card.innerHTML = `
+function renderWorkouts(){
+  const workouts = DB.get(KEYS.WORKOUTS, []);
+  const wrap = document.getElementById('workoutList');
+  wrap.innerHTML='';
+  if(workouts.length===0){
+    wrap.innerHTML = '<div class="empty">Nenhum treino cadastrado ainda.</div>';
+    return;
+  }
+  workouts.forEach(w=>{
+    const card = document.createElement('div');
+    card.className='workout-card';
+    card.innerHTML = `
       <div class="workout-head">
         <h3>${escapeHTML(w.name)}</h3>
         <div class="tag">${fmtDateBR(w.createdAt)} · ${w.exercises.length} exercícios</div>
       </div>
-      ${w.exercises
-        .map(
-          (ex) => `
+      ${w.exercises.map(ex=>`
         <div class="exercise-row">
           <div class="ex-name">${escapeHTML(ex.name)}</div>
           <span class="tagv">SÉRIES ${ex.sets}</span>
           <span class="tagv">REPS ${ex.reps}</span>
-          <span class="tagv">CARGA ${ex.load}</span>
           <span></span>
         </div>
-      `,
-        )
-        .join("")}
+      `).join('')}
       <div class="workout-actions">
         <button class="btn danger" data-id="${w.id}">excluir treino</button>
       </div>
-    `
-          card
-            .querySelector(".workout-actions button")
-            .addEventListener("click", () => {
-              const all = DB.get(KEYS.WORKOUTS, []).filter((x) => x.id !== w.id)
-              DB.set(KEYS.WORKOUTS, all)
-              renderWorkouts()
-              renderDashboard()
-            })
-          wrap.appendChild(card)
-        })
-      }
+    `;
+    card.querySelector('.workout-actions button').addEventListener('click', ()=>{
+      const all = DB.get(KEYS.WORKOUTS, []).filter(x=>x.id!==w.id);
+      DB.set(KEYS.WORKOUTS, all);
+      renderWorkouts();
+      renderDashboard();
+    });
+    wrap.appendChild(card);
+  });
+}
 
-      /* ===================== IMC ===================== */
-      document.getElementById("calcImcBtn").addEventListener("click", () => {
-        const peso = parseFloat(document.getElementById("imcPeso").value)
-        const altura = parseFloat(document.getElementById("imcAltura").value)
-        if (isNaN(peso) || peso <= 0 || isNaN(altura) || altura <= 0) {
-          alert("Informe peso e altura válidos.")
-          return
-        }
-        const imc = peso / (altura * altura)
-        const imcRounded = Math.round(imc * 10) / 10
-        let label = "",
-          color = ""
-        if (imc < 18.5) {
-          label = "Abaixo do peso"
-          color = "var(--ink)"
-        } else if (imc < 25) {
-          label = "Peso normal"
-          color = "var(--olive)"
-        } else if (imc < 30) {
-          label = "Sobrepeso"
-          color = "var(--orange)"
-        } else {
-          label = "Obesidade"
-          color = "var(--red)"
-        }
+/* ===================== IMC ===================== */
+document.getElementById('calcImcBtn').addEventListener('click', ()=>{
+  const peso = parseFloat(document.getElementById('imcPeso').value);
+  const altura = parseFloat(document.getElementById('imcAltura').value);
+  if(isNaN(peso) || peso<=0 || isNaN(altura) || altura<=0){
+    alert('Informe peso e altura válidos.');
+    return;
+  }
+  const imc = peso / (altura*altura);
+  const imcRounded = Math.round(imc*10)/10;
+  let label='', color='';
+  if(imc < 18.5){ label='Abaixo do peso'; color='var(--ink)'; }
+  else if(imc < 25){ label='Peso normal'; color='var(--olive)'; }
+  else if(imc < 30){ label='Sobrepeso'; color='var(--orange)'; }
+  else { label='Obesidade'; color='var(--red)'; }
 
-        const box = document.getElementById("imcResultBox")
-        box.style.display = "block"
-        document.getElementById("imcValue").textContent = imcRounded
-        document.getElementById("imcValue").style.color = color
-        document.getElementById("imcLabel").textContent = label
+  const box = document.getElementById('imcResultBox');
+  box.style.display='block';
+  document.getElementById('imcValue').textContent = imcRounded;
+  document.getElementById('imcValue').style.color = color;
+  document.getElementById('imcLabel').textContent = label;
 
-        const history = DB.get(KEYS.IMC, [])
-        history.unshift({
-          id: uid(),
-          date: todayISO(),
-          peso,
-          altura,
-          imc: imcRounded,
-          label,
-        })
-        DB.set(KEYS.IMC, history)
-        renderImcHistory()
-      })
+  const history = DB.get(KEYS.IMC, []);
+  history.unshift({ id:uid(), date: todayISO(), peso, altura, imc:imcRounded, label });
+  DB.set(KEYS.IMC, history);
+  renderImcHistory();
+});
 
-      function renderImcHistory() {
-        const history = DB.get(KEYS.IMC, [])
-        const wrap = document.getElementById("imcHistory")
-        wrap.innerHTML = ""
-        if (history.length === 0) {
-          wrap.innerHTML =
-            '<div class="empty">Nenhum cálculo registrado ainda.</div>'
-          return
-        }
-        history.forEach((h) => {
-          const row = document.createElement("div")
-          row.className = "entry"
-          row.innerHTML = `
+function renderImcHistory(){
+  const history = DB.get(KEYS.IMC, []);
+  const wrap = document.getElementById('imcHistory');
+  wrap.innerHTML='';
+  if(history.length===0){
+    wrap.innerHTML = '<div class="empty">Nenhum cálculo registrado ainda.</div>';
+    return;
+  }
+  history.forEach(h=>{
+    const row = document.createElement('div');
+    row.className='entry';
+    row.innerHTML = `
       <div class="info">
         <div class="name">${h.imc} — ${escapeHTML(h.label)}</div>
         <div class="meta">${fmtDateBR(h.date)} · ${h.peso}kg / ${h.altura}m</div>
       </div>
       <button class="btn danger" data-id="${h.id}">remover</button>
-    `
-          row.querySelector("button").addEventListener("click", () => {
-            const all = DB.get(KEYS.IMC, []).filter((x) => x.id !== h.id)
-            DB.set(KEYS.IMC, all)
-            renderImcHistory()
-            renderDashboard()
-          })
-          wrap.appendChild(row)
-        })
-      }
+    `;
+    row.querySelector('button').addEventListener('click', ()=>{
+      const all = DB.get(KEYS.IMC, []).filter(x=>x.id!==h.id);
+      DB.set(KEYS.IMC, all);
+      renderImcHistory();
+      renderDashboard();
+    });
+    wrap.appendChild(row);
+  });
+}
 
-      /* ===================== DASHBOARD ===================== */
-      function renderDashboard() {
-        const today = todayISO()
-        document.getElementById("dashDate").textContent = fmtDateBR(today)
+/* ===================== DASHBOARD ===================== */
+function renderDashboard(){
+  const today = todayISO();
+  document.getElementById('dashDate').textContent = fmtDateBR(today);
 
-        const foodsToday = DB.get(KEYS.FOODS, []).filter(
-          (f) => f.date === today,
-        )
-        const totalGramas = foodsToday.reduce((s, f) => s + f.gramas, 0)
-        document.getElementById("statKcal").innerHTML =
-          `${totalGramas} <small>g</small>`
-        document.getElementById("statMeals").textContent = foodsToday.length
+  const foodsToday = DB.get(KEYS.FOODS, []).filter(f=>f.date===today);
+  const totalGramas = foodsToday.reduce((s,f)=>s+f.gramas,0);
+  document.getElementById('statKcal').innerHTML = `${totalGramas} <small>g</small>`;
+  document.getElementById('statMeals').textContent = foodsToday.length;
 
-        const workouts = DB.get(KEYS.WORKOUTS, [])
-        document.getElementById("statWorkouts").textContent = workouts.length
+  const workouts = DB.get(KEYS.WORKOUTS, []);
+  document.getElementById('statWorkouts').textContent = workouts.length;
 
-        const imcHistory = DB.get(KEYS.IMC, [])
-        document.getElementById("statImc").textContent = imcHistory.length
-          ? imcHistory[0].imc
-          : "—"
+  const imcHistory = DB.get(KEYS.IMC, []);
+  document.getElementById('statImc').textContent = imcHistory.length ? imcHistory[0].imc : '—';
 
-        const wrap = document.getElementById("dashWorkoutList")
-        wrap.innerHTML = ""
-        if (workouts.length === 0) {
-          wrap.innerHTML =
-            '<div class="empty">Nenhum treino cadastrado. Vá até a aba Treinos para criar um.</div>'
-        } else {
-          workouts.slice(0, 4).forEach((w) => {
-            const row = document.createElement("div")
-            row.className = "entry"
-            row.innerHTML = `
+  const wrap = document.getElementById('dashWorkoutList');
+  wrap.innerHTML='';
+  if(workouts.length===0){
+    wrap.innerHTML = '<div class="empty">Nenhum treino cadastrado. Vá até a aba Treinos para criar um.</div>';
+  } else {
+    workouts.slice(0,4).forEach(w=>{
+      const row = document.createElement('div');
+      row.className='entry';
+      row.innerHTML = `
         <div class="info">
           <div class="name">${escapeHTML(w.name)}</div>
           <div class="meta">${fmtDateBR(w.createdAt)} · ${w.exercises.length} exercícios</div>
         </div>
         <div class="kcal" style="color:var(--ink);">→</div>
-      `
-            wrap.appendChild(row)
-          })
-        }
-      }
+      `;
+      wrap.appendChild(row);
+    });
+  }
+}
 
-      /* ===================== INIT ===================== */
-      renderFoodList()
-      renderWorkouts()
-      renderImcHistory()
-      renderDashboard()
-    </script>
-  </body>
+/* ===================== INIT ===================== */
+renderFoodList();
+renderWorkouts();
+renderImcHistory();
+renderDashboard();
+</script>
+</body>
 </html>
